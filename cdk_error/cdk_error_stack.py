@@ -70,6 +70,7 @@ class CdkErrorStack(core.Stack):
 
         pipeline_name = 'pipeline'
 
+        # comment out lines 74+ to show error does not occur when commented out. This will allow the cdk deployment to work, such that the roles are successfully generated, such that you can see what the generated roles' trust policies are in the AWS console
         pipeline = codepipeline.Pipeline(
             scope = self,
             id = pipeline_name,
