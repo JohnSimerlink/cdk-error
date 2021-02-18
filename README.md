@@ -1,6 +1,21 @@
 
 # Welcome to your CDK Python project!
 
+# Setup
+- `$ python3 -m venv .venv`
+- `$ source .venv/bin/activate`
+- `$ pip install -r requirements.txt`
+- `$ cdk synth`
+# Deploy
+- `$ cdk deploy`
+
+A permissions error that shows up in the local terminal.
+![](https://i.imgur.com/YdgEtQk.png)
+
+This error only occurs when
+Which seems to be inconsistent with the shown permissions in the AWS Console
+
+### Error that shows up in console
 This is a blank project for Python development with CDK.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
@@ -14,16 +29,10 @@ you can create the virtualenv manually.
 
 To manually create a virtualenv on MacOS and Linux:
 
-```
-$ python3 -m venv .venv
-```
 
 After the init process completes and the virtualenv is created, you can use the following
 step to activate your virtualenv.
 
-```
-$ source .venv/bin/activate
-```
 
 If you are a Windows platform, you would activate the virtualenv like this:
 
@@ -33,15 +42,9 @@ If you are a Windows platform, you would activate the virtualenv like this:
 
 Once the virtualenv is activated, you can install the required dependencies.
 
-```
-$ pip install -r requirements.txt
-```
 
 At this point you can now synthesize the CloudFormation template for this code.
 
-```
-$ cdk synth
-```
 
 To add additional dependencies, for example other CDK libraries, just add
 them to your `setup.py` file and rerun the `pip install -r requirements.txt`
