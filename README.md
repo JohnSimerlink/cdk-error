@@ -12,9 +12,9 @@
 A permissions error that shows up in the local terminal.
 ![](https://i.imgur.com/YdgEtQk.png)
 
-Which seems to be inconsistent with the shown permissions in the AWS Console.
+This seems to be inconsistent with the shown permissions in the AWS Console:
 
-If you comment out lines 73 - 104, in cdk_error_stack.py, `cdk synth` will successfully deploy, upon which you can inspect the roles in the AWS IAM Console. Doing so, shows the following trust relationships for pipeline_action_role.
+If you comment out lines 73 - 104, in cdk_error_stack.py, `cdk deploy` will successfully deploy, upon which you can inspect the roles in the AWS IAM Console. Doing so, shows the following trust relationships for pipeline_action_role.
 ![](https://i.imgur.com/ZV7XYrw.png)
 
 Clicking on "Edit Trust Relationship" Shows the following JSON for the trust relationship
@@ -31,9 +31,13 @@ The below related issues/questions on the internet do not appear to be the same 
 - [aws pipeline role is not authorized to perform AssumeRole on cross account role](https://stackoverflow.com/questions/60958114/aws-pipeline-role-is-not-authorized-to-perform-assumerole-on-cross-account-role)
 - [[aws-codepipeline-actions] Cannot assume role by code pipeline on code pipeline action AWS CDK #10068](https://github.com/aws/aws-cdk/issues/10068)
 
+Manually creating the roles with their trust policies first, and then referencing them via ARN inside of CDK to set up the codepipeline also throws the same error.
+
 OS: `MacOS Catalina 10.15.2 (19C57)`
 
 Python: `3.8.6`
+
+Node: `10.19.0`
 
 CDK CLI Version: `1.85.0 (build 5f44668)`
 
