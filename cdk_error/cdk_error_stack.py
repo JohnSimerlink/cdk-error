@@ -10,7 +10,7 @@ from aws_cdk import (
 )
 
 class CdkErrorStack(core.Stack):
-
+    
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
@@ -25,6 +25,9 @@ class CdkErrorStack(core.Stack):
             repo_name
         ) 
         build_spec = codebuild.BuildSpec.from_source_filename('buildspec.yml')
+
+        # MDB commenting this out to verify the roles aren't needed
+        """
         pipeline_role = iam.Role(
             scope = self,
             id = 'pipeline-role',
@@ -55,19 +58,28 @@ class CdkErrorStack(core.Stack):
                 effect = iam.Effect.ALLOW
             )
         )
+        """
         build_proj = codebuild.PipelineProject(
             self,
             'pipeplineproj',
-            role = pipeline_role,
+            #role = pipeline_role, # MDB If not specified, a role is created autmoatically
+        )
+
+        # MDB I additional permissions are needed in the CodeBuild role (i.e. permission to write to S3 or use ECR) you can add them like this:
+        build_proj.role.add_managed_policy(
+            iam.ManagedPolicy.from_aws_managed_policy_name('AmazonS3FullAccess')
         )
 
         source_output = codepipeline.Artifact()
+
+        # MDB I don't think this is being used so I commented it out
+        """
         build_action = codepipeline_actions.CodeBuildAction(
             action_name = 'build-action',
             input = source_output,
             project = repository,
         )
-
+        """
         pipeline_name = 'pipeline'
 
         # comment out lines 74+ to show error does not occur when commented out. This will allow the cdk deployment to work, such that the roles are successfully generated, such that you can see what the generated roles' trust policies are in the AWS console
@@ -75,8 +87,8 @@ class CdkErrorStack(core.Stack):
             scope = self,
             id = pipeline_name,
             pipeline_name = pipeline_name,
-            role = pipeline_role,
-            stages = [
+            #role = pipeline_role, # If not specified, a role is automatically created for you. 
+            stages = [  
                 codepipeline.StageProps(
                     stage_name = 'source',
                     actions = [
@@ -85,7 +97,7 @@ class CdkErrorStack(core.Stack):
                             repository = repository,
                             branch = branch_name,
                             output = source_output, 
-                            role = pipeline_action_role,
+                            #role = pipeline_action_role, # MDB If not specified, the pipeline role is used
                         ),
                     ],
                 ),
@@ -96,9 +108,14 @@ class CdkErrorStack(core.Stack):
                             project = build_proj,
                             action_name = 'codeCommitSource',
                             input = source_output,
-                            role = pipeline_action_role,
+                            #role = pipeline_action_role, # MDB If no role is specified, the pipeline role is used to invoke the build.
                         ) 
                     ],
                 ),
             ]
+        )
+
+        # MDB Here's an example of how to attach additional policies/permissions to the pipeline role that's automatically generated.
+        pipeline.role.add_managed_policy(
+            policy=iam.ManagedPolicy.from_aws_managed_policy_name('AmazonS3FullAccess')
         )
