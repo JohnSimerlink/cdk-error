@@ -35,16 +35,36 @@ class CdkErrorStack(core.Stack):
             id = 'pipeline-action-role',
             assumed_by = iam.ServicePrincipal('codepipeline.amazonaws.com')
         )
-        pipeline_role.assume_role_policy.add_statements(
-            iam.PolicyStatement(
-                actions = ["sts:AssumeRole"],
-                principals = [
-                    iam.ServicePrincipal(
-                        'codebuild.amazonaws.com' 
-                    )
-                ],
-                effect = iam.Effect.ALLOW
+        # pipeline_role.assume_role_policy.add_statements(
+        #     iam.PolicyStatement(
+        #         actions = ["sts:AssumeRole"],
+        #         principals = [
+        #             iam.ServicePrincipal(
+        #                 'codebuild.amazonaws.com' 
+        #             )
+        #         ],
+        #         effect = iam.Effect.ALLOW
+        #     )
+        # )
+        pipeline_role.attach_inline_policy(
+            iam.Policy(
+                self,
+                "pipeline-role-policy",
+                document = iam.PolicyDocument(
+                    statements = [
+                        iam.PolicyStatement(
+                            actions = [
+                                "sts:AssumeRole"
+                            ],
+                            effect = iam.Effect.ALLOW,
+                            resources = [
+                                pipeline_action_role.role_arn
+                            ]
+                        )
+                    ]
+                ),
             )
+            
         )
         pipeline_action_role.assume_role_policy.add_statements(
             iam.PolicyStatement(
